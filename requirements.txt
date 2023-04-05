@@ -1,0 +1,4 @@
+Pyrogram==2.0.103
+python-dotenv==1.0.0
+uvloop==0.17.0
+yt-dlp==2023.3.4
