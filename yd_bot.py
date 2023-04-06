@@ -20,11 +20,10 @@ MESSAGES = get_messages()
 @APP.on_message(filters.text & filters.private)
 async def process_message(client, message):
     """Flow обработки входящих сообщений"""
-
     result_reply = MESSAGES['NonUrlMessage']
 
     if message.text.startswith('http'):
-        await message.reply(MESSAGES['FindUrl'])
+        find_url_message = await message.reply(MESSAGES['FindUrl'])
 
         url = message.text
         download_info = get_file(url=url)
@@ -33,22 +32,35 @@ async def process_message(client, message):
         if isinstance(download_info, dict):
             download_info = get_file(url=url, download=True)
             filepath = download_info['requested_downloads'][0]['filepath']
-            await message.reply(MESSAGES['SuccessfulDownload'])
-            await message.reply_document(document=filepath)
+            successful_message = await message.reply(MESSAGES['SuccessfulDownload'])
+            progress_message = await message.reply(MESSAGES['Preparation'])
+            await message.reply_document(
+                document=filepath,
+                progress=progress,
+                progress_args=(progress_message,)
+            )
             os.remove(filepath)
+
+            for bot_message in (find_url_message, successful_message, progress_message):
+                await bot_message.delete()
+
             result_reply = MESSAGES['SuccessfulSend']
 
     await message.reply(result_reply)
 
 
+async def progress(current, total, progress_message):
+    await progress_message.edit_text(render_progressbar(total, current))
+
+
 def render_progressbar(total, current, prefix='', suffix='', length=30, fill='█', zfill='░'):
-    """Будущий прогресс-бар скачивания файла"""  # Не используется 05.04.2023
+    """Прогресс-бар скачивания файла"""
     current = min(total, current)
     percent = "{0:.1f}"
     percent = percent.format(100 * (current / float(total)))
     filled_length = int(length * current // total)
     pbar = fill * filled_length + zfill * (length - filled_length)
-    progressbar = '{0} |{1}| {2}% {3}'.format(prefix, pbar, percent, suffix)
+    progressbar = '{0} {1}| {2}% {3}'.format(prefix, pbar, percent, suffix)
     return progressbar
 
 
