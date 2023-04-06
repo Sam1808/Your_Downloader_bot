@@ -9,7 +9,12 @@ def get_file(
 ):
     """Скачиваем видео по ссылке"""
     if not options:  # Возможно форматы прийдется вынести в переменную
-        options = {'format': 'b', 'format-sort': 'filesize~50M'}
+        options = {
+            'format': 'b',
+            'format-sort': 'filesize~50M',
+            'outtmpl': '%(title)s.%(ext)s',
+            'trim_file_name': 49,
+        }
 
     try:
         with yt_dlp.YoutubeDL(options) as ydl:
