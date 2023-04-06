@@ -1,5 +1,5 @@
 import os
-# import uvloop
+import uvloop
 
 from dotenv import load_dotenv
 from pyrogram import Client, filters
@@ -8,6 +8,7 @@ from yt_dlp_utils import get_file
 
 
 load_dotenv()
+uvloop.install()
 APP = Client(
     name=os.environ['APP_NAME'],
     api_id=os.environ['API_ID'],
@@ -65,5 +66,5 @@ def render_progressbar(total, current, prefix='', suffix='', length=30, fill='�
 
 
 if __name__ == '__main__':
-    # uvloop.install()  # Разобраться с ускорением loop`а
+
     APP.run()
