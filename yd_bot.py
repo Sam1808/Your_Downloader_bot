@@ -61,6 +61,7 @@ async def progress(current, total, progress_message):
     except (FloodWait, FloodWait_420) as err:
         await asyncio.sleep(err.value)
 
+
 def render_progressbar(total, current, prefix='', suffix='', length=30, fill='█', zfill='░'):
     """Прогресс-бар скачивания файла"""
     current = min(total, current)
