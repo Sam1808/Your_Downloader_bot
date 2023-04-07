@@ -1,3 +1,4 @@
+import os
 import yt_dlp
 from yt_dlp import DownloadError
 
@@ -14,6 +15,7 @@ def get_file(
             'format-sort': 'filesize~50M',
             'outtmpl': '%(title)s.%(ext)s',
             'trim_file_name': 49,
+            'geo_bypass': True,
         }
 
     try:
