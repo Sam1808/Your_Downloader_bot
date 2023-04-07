@@ -39,14 +39,11 @@ async def process_message(client, message):
             successful_message = await message.reply(MESSAGES['SuccessfulDownload'])
             progress_message = await message.reply(MESSAGES['Preparation'])
 
-            try:  # avoid Flood Waits
-                await message.reply_document(
-                    document=filepath,
-                    progress=progress,
-                    progress_args=(progress_message,)
-                )
-            except (FloodWait, FloodWait_420) as err:
-                await asyncio.sleep(err.value)
+            await message.reply_document(
+                document=filepath,
+                progress=progress,
+                progress_args=(progress_message,)
+            )
 
             os.remove(filepath)
 
@@ -59,8 +56,10 @@ async def process_message(client, message):
 
 
 async def progress(current, total, progress_message):
-    await progress_message.edit_text(render_progressbar(total, current))
-
+    try:  # avoid Flood Waits
+        await progress_message.edit_text(render_progressbar(total, current))
+    except (FloodWait, FloodWait_420) as err:
+        await asyncio.sleep(err.value)
 
 def render_progressbar(total, current, prefix='', suffix='', length=30, fill='█', zfill='░'):
     """Прогресс-бар скачивания файла"""
