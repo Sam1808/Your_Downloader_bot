@@ -1,8 +1,10 @@
 import os
 import uvloop
+import asyncio
 
 from dotenv import load_dotenv
 from pyrogram import Client, filters
+from pyrogram.errors import FloodWait
 from messages import get_messages
 from yt_dlp_utils import get_file
 
@@ -35,11 +37,16 @@ async def process_message(client, message):
             filepath = download_info['requested_downloads'][0]['filepath']
             successful_message = await message.reply(MESSAGES['SuccessfulDownload'])
             progress_message = await message.reply(MESSAGES['Preparation'])
-            await message.reply_document(
-                document=filepath,
-                progress=progress,
-                progress_args=(progress_message,)
-            )
+
+            try:  # avoid Flood Waits
+                await message.reply_document(
+                    document=filepath,
+                    progress=progress,
+                    progress_args=(progress_message,)
+                )
+            except FloodWait as err:
+                await asyncio.sleep(err.value)
+
             os.remove(filepath)
 
             for bot_message in (find_url_message, successful_message, progress_message):
