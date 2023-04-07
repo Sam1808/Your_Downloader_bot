@@ -5,6 +5,7 @@ import asyncio
 from dotenv import load_dotenv
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
+from pyrogram.errors.exceptions.flood_420 import FloodWait as FloodWait_420
 from messages import get_messages
 from yt_dlp_utils import get_file
 
@@ -44,7 +45,7 @@ async def process_message(client, message):
                     progress=progress,
                     progress_args=(progress_message,)
                 )
-            except FloodWait as err:
+            except (FloodWait, FloodWait_420) as err:
                 await asyncio.sleep(err.value)
 
             os.remove(filepath)
