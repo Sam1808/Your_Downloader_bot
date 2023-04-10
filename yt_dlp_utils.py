@@ -16,6 +16,7 @@ def get_file(
             'outtmpl': '%(title)s.%(ext)s',
             'trim_file_name': 49,
             'geo_bypass': True,
+            'cookiefile': 'cookies.txt'
         }
 
     try:
