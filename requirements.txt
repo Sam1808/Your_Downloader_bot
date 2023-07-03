@@ -2,4 +2,4 @@ Pyrogram==2.0.103
 python-dotenv==1.0.0
 TgCrypto==1.2.5
 uvloop==0.17.0
-yt-dlp==2023.3.4
+yt-dlp==2023.6.22
